@@ -1,0 +1,16 @@
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+
+<body>
+            <form action="/results" method="POST">
+                <label for="Prompt"> Prompt
+                    <input type="text" name="Prompt">
+                    <input type="submit" value="Submit">
+                </label> 
+            </form>
+        </header>
+    </div>
+</body>
+
+</html>
