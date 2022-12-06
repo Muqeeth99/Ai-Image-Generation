@@ -45,3 +45,6 @@ def submit():
         prompt = request.form.get("Prompt")
         img_data = run_inference(prompt)
     return render_template("results.html",n=img_data)
+
+if __name__ == '__main__':
+    app.run()
