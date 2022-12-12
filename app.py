@@ -28,7 +28,8 @@ def run_inference(prompt):
     is_verbose=False
     )
     img_data = io.BytesIO()
-    image.save("/Users/mac/Documents/SD/Stable-diffuser-main/Static/gen_image.jpeg", "JPEG")
+#     image.save("/Users/mac/Documents/SD/Stable-diffuser-main/Static/gen_image.jpeg", "JPEG")
+    image.save("./Static/gen_image.jpeg", "JPEG")
     img_data.seek(0)
 
     return
