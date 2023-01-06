@@ -1,36 +1,34 @@
 from flask import Flask, request, render_template, send_file
 import io
 import torch
-import torch
-from min_dalle import MinDalle 
+from torch import autocast
+from diffusers import StableDiffusionPipeline
 
 app = Flask(__name__, template_folder='template',static_folder='/Users/mac/Documents/SD/Stable-diffuser-main/Static')
 
+assert torch.cuda.is_available()
+gc.collect()
+torch.cuda.empty_cache()
 
-model = MinDalle(
-    models_root='./pretrained',
-    dtype=torch.float32,
-    device='cpu',
-    is_mega=False, 
-    is_reusable=True
-)
+model_id = "CompVis/stable-diffusion-v1-4"
+device = "cuda"
+remove_safety = False
+auth_token = "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"
+
+pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, revision="fp16", use_auth_token=auth_token)
+pipe = pipe.to(device)
+pipe.enable_attention_slicing()
+
 
 def run_inference(prompt):
-
-    image = model.generate_image(
-    text=prompt,
-    seed=5,
-    grid_size=1,
-    is_seamless=False,
-    temperature=1,
-    top_k=256,
-    supercondition_factor=32,
-    is_verbose=False
-    )
-    img_data = io.BytesIO()
-#     image.save("/Users/mac/Documents/SD/Stable-diffuser-main/Static/gen_image.jpeg", "JPEG")
-    image.save("./Static/gen_image.jpeg", "JPEG")
-    img_data.seek(0)
+    gc.collect()
+    torch.cuda.empty_cache()
+    num_images = 1
+    text=prompt
+    texts = [ text ] * num_images
+    with autocast(device):
+        image = pipe(texts, guidance_scale=7.5, num_inference_steps=10).images[0] 
+    image.save("./Static/gen_image.jpeg")
 
     return
 
